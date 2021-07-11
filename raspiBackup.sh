@@ -61,11 +61,11 @@ IS_HOTFIX=$(( ! $(grep -iq hotfix <<< "$VERSION"; echo $?) ))
 MYSELF=${0##*/}
 MYNAME=${MYSELF%.*}
 
-GIT_DATE="$Date: 2021-07-11 17:37:52 +0200$"
+GIT_DATE="$Date: 2021-07-11 17:45:03 +0200$"
 GIT_DATE_ONLY=${GIT_DATE/: /}
 GIT_DATE_ONLY=$(cut -f 2 -d ' ' <<< $GIT_DATE)
 GIT_TIME_ONLY=$(cut -f 3 -d ' ' <<< $GIT_DATE)
-GIT_COMMIT="$Sha1: 94404fd$"
+GIT_COMMIT="$Sha1: 44879e8$"
 GIT_COMMIT_ONLY=$(cut -f 2 -d ' ' <<< $GIT_COMMIT | sed 's/\$//')
 
 GIT_CODEVERSION="$MYSELF $VERSION, $GIT_DATE_ONLY/$GIT_TIME_ONLY - $GIT_COMMIT_ONLY"
@@ -5387,7 +5387,7 @@ function inspect4Backup() {
 
 			# test whether boot device is mounted
 			local bootMountpoint="/boot"
-			local bootPartition="$(findmnt $bootMountpoint -o source -n) | grep -E -o "/dev/[0-9a-z]+")" # /dev/mmcblk0p1, /dev/loop01p or /dev/sda1 or /dev/sda2[/@] if btrfs is used
+			local bootPartition="$(findmnt $bootMountpoint -o source -n)" # /dev/mmcblk0p1, /dev/loop01p or /dev/sda1 
 			logItem "$bootMountpoint mounted? $bootPartition"
 
 			# test whether some other /boot path is mounted
@@ -5398,7 +5398,7 @@ function inspect4Backup() {
 			fi
 
 			# find root partition
-			local rootPartition=$(findmnt / -o source -n) # /dev/root or /dev/sda1 or /dev/mmcblk1p1
+			local rootPartition="$(findmnt / -o source -n) | grep -E -o "/dev/[0-9a-z]+")" # /dev/mmcblk0p2, /dev/loop02p or /dev/sda2 or /dev/sda2[/@] if btrfs is used
 			logItem "/ mounted? $rootPartition"
 			if [[ $rootPartition == "/dev/root" ]]; then
 				local rp=$(grep -E -o "root=[^ ]+" /proc/cmdline)
